@@ -1,4 +1,4 @@
-FROM node:11.15.0 
+FROM node:16.17.1 
 
 WORKDIR /spacy-io
 
