@@ -33,7 +33,7 @@ rule-based matching are:
 | Attribute                                      | Description                                                                                                               |
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | `ORTH`                                         | The exact verbatim text of a token. ~~str~~                                                                               |
-| `TEXT` <Tag variant="new">2.1</Tag>            | The exact verbatim text of a token. ~~str~~                                                                               |
+| `TEXT`                                         | The exact verbatim text of a token. ~~str~~                                                                               |
 | `NORM`                                         | The normalized form of the token text. ~~str~~                                                                            |
 | `LOWER`                                        | The lowercase form of the token text. ~~str~~                                                                             |
 | `LENGTH`                                       | The length of the token text. ~~int~~                                                                                     |
@@ -48,7 +48,7 @@ rule-based matching are:
 | `ENT_IOB`                                      | The IOB part of the token's entity tag. ~~str~~                                                                           |
 | `ENT_ID`                                       | The token's entity ID (`ent_id`). ~~str~~                                                                                 |
 | `ENT_KB_ID`                                    | The token's entity knowledge base ID (`ent_kb_id`). ~~str~~                                                               |
-| `_` <Tag variant="new">2.1</Tag>               | Properties in [custom extension attributes](/usage/processing-pipelines#custom-components-attributes). ~~Dict[str, Any]~~ |
+| `_`                                            | Properties in [custom extension attributes](/usage/processing-pipelines#custom-components-attributes). ~~Dict[str, Any]~~ |
 | `OP`                                           | Operator or quantifier to determine how often to match a token pattern. ~~str~~                                           |
 
 Operators and quantifiers define **how often** a token pattern should be
@@ -64,7 +64,7 @@ matched:
 > ```
 
 | OP      | Description                                                            |
-|---------|------------------------------------------------------------------------|
+| ------- | ---------------------------------------------------------------------- |
 | `!`     | Negate the pattern, by requiring it to match exactly 0 times.          |
 | `?`     | Make the pattern optional, by allowing it to match 0 or 1 times.       |
 | `+`     | Require the pattern to match 1 or more times.                          |
@@ -86,14 +86,20 @@ it compares to another value.
 > ]
 > ```
 
-| Attribute                  | Description                                                                                              |
-| -------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `IN`                       | Attribute value is member of a list. ~~Any~~                                                             |
-| `NOT_IN`                   | Attribute value is _not_ member of a list. ~~Any~~                                                       |
-| `IS_SUBSET`                | Attribute value (for `MORPH` or custom list attributes) is a subset of a list. ~~Any~~                   |
-| `IS_SUPERSET`              | Attribute value (for `MORPH` or custom list attributes) is a superset of a list. ~~Any~~                 |
-| `INTERSECTS`               | Attribute value (for `MORPH` or custom list attribute) has a non-empty intersection with a list. ~~Any~~ |
-| `==`, `>=`, `<=`, `>`, `<` | Attribute value is equal, greater or equal, smaller or equal, greater or smaller. ~~Union[int, float]~~  |
+| Attribute                        | Description                                                                                                                                                                                                       |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `REGEX`                          | Attribute value matches the regular expression at any position in the string. ~~Any~~                                                                                                                             |
+| `FUZZY`                          | Attribute value matches if the `fuzzy_compare` method matches for `(value, pattern, -1)`. The default method allows a Levenshtein edit distance of at least 2 and up to 30% of the pattern string length. ~~Any~~ |
+| `FUZZY1`, `FUZZY2`, ... `FUZZY9` | Attribute value matches if the `fuzzy_compare` method matches for `(value, pattern, N)`. The default method allows a Levenshtein edit distance of at most N (1-9). ~~Any~~                                        |
+| `IN`                             | Attribute value is member of a list. ~~Any~~                                                                                                                                                                      |
+| `NOT_IN`                         | Attribute value is _not_ member of a list. ~~Any~~                                                                                                                                                                |
+| `IS_SUBSET`                      | Attribute value (for `MORPH` or custom list attributes) is a subset of a list. ~~Any~~                                                                                                                            |
+| `IS_SUPERSET`                    | Attribute value (for `MORPH` or custom list attributes) is a superset of a list. ~~Any~~                                                                                                                          |
+| `INTERSECTS`                     | Attribute value (for `MORPH` or custom list attribute) has a non-empty intersection with a list. ~~Any~~                                                                                                          |
+| `==`, `>=`, `<=`, `>`, `<`       | Attribute value is equal, greater or equal, smaller or equal, greater or smaller. ~~Union[int, float]~~                                                                                                           |
+
+As of spaCy v3.5, `REGEX` and `FUZZY` can be used in combination with `IN` and
+`NOT_IN`.
 
 ## Matcher.\_\_init\_\_ {#init tag="method"}
 
@@ -109,10 +115,11 @@ string where an integer is expected) or unexpected property names.
 > matcher = Matcher(nlp.vocab)
 > ```
 
-| Name                                    | Description                                                                                           |
-| --------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `vocab`                                 | The vocabulary object, which must be shared with the documents the matcher will operate on. ~~Vocab~~ |
-| `validate` <Tag variant="new">2.1</Tag> | Validate all patterns added to this matcher. ~~bool~~                                                 |
+| Name            | Description                                                                                           |
+| --------------- | ----------------------------------------------------------------------------------------------------- |
+| `vocab`         | The vocabulary object, which must be shared with the documents the matcher will operate on. ~~Vocab~~ |
+| `validate`      | Validate all patterns added to this matcher. ~~bool~~                                                 |
+| `fuzzy_compare` | The comparison method used for the `FUZZY` operators. ~~Callable[[str, str, int], bool]~~             |
 
 ## Matcher.\_\_call\_\_ {#call tag="method"}
 

@@ -162,7 +162,7 @@ rule-based matching are:
 | Attribute                                      | Description                                                                                                                                                                                                                                                                                               |
 | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `ORTH`                                         | The exact verbatim text of a token. ~~str~~                                                                                                                                                                                                                                                               |
-| `TEXT` <Tag variant="new">2.1</Tag>            | The exact verbatim text of a token. ~~str~~                                                                                                                                                                                                                                                               |
+| `TEXT`                                         | The exact verbatim text of a token. ~~str~~                                                                                                                                                                                                                                                               |
 | `NORM`                                         | The normalized form of the token text. ~~str~~                                                                                                                                                                                                                                                            |
 | `LOWER`                                        | The lowercase form of the token text. ~~str~~                                                                                                                                                                                                                                                             |
 | `LENGTH`                                       | The length of the token text. ~~int~~                                                                                                                                                                                                                                                                     |
@@ -174,7 +174,7 @@ rule-based matching are:
 | `SPACY`                                        | Token has a trailing space. ~~bool~~                                                                                                                                                                                                                                                                      |
 | `POS`, `TAG`, `MORPH`, `DEP`, `LEMMA`, `SHAPE` | The token's simple and extended part-of-speech tag, morphological analysis, dependency label, lemma, shape. Note that the values of these attributes are case-sensitive. For a list of available part-of-speech tags and dependency labels, see the [Annotation Specifications](/api/annotation). ~~str~~ |
 | `ENT_TYPE`                                     | The token's entity label. ~~str~~                                                                                                                                                                                                                                                                         |
-| `_` <Tag variant="new">2.1</Tag>               | Properties in [custom extension attributes](/usage/processing-pipelines#custom-components-attributes). ~~Dict[str, Any]~~                                                                                                                                                                                 |
+| `_`                                            | Properties in [custom extension attributes](/usage/processing-pipelines#custom-components-attributes). ~~Dict[str, Any]~~                                                                                                                                                                                 |
 | `OP`                                           | [Operator or quantifier](#quantifiers) to determine how often to match a token pattern. ~~str~~                                                                                                                                                                                                           |
 
 <Accordion title="Does it matter if the attribute names are uppercase or lowercase?">
@@ -364,6 +364,46 @@ else:
 
 </Accordion>
 
+#### Fuzzy matching {#fuzzy new="3.5"}
+
+Fuzzy matching allows you to match tokens with alternate spellings, typos, etc.
+without specifying every possible variant.
+
+```python
+# Matches "favourite", "favorites", "gavorite", "theatre", "theatr", ...
+pattern = [{"TEXT": {"FUZZY": "favorite"}},
+           {"TEXT": {"FUZZY": "theater"}}]
+```
+
+The `FUZZY` attribute allows fuzzy matches for any attribute string value,
+including custom attributes. Just like `REGEX`, it always needs to be applied to
+an attribute like `TEXT` or `LOWER`. By default `FUZZY` allows a Levenshtein
+edit distance of at least 2 and up to 30% of the pattern string length. Using
+the more specific attributes `FUZZY1`..`FUZZY9` you can specify the maximum
+allowed edit distance directly.
+
+```python
+# Match lowercase with fuzzy matching (allows 2 edits)
+pattern = [{"LOWER": {"FUZZY": "definitely"}}]
+
+# Match custom attribute values with fuzzy matching (allows 2 edits)
+pattern = [{"_": {"country": {"FUZZY": "Kyrgyzstan"}}}]
+
+# Match with exact Levenshtein edit distance limits (allows 3 edits)
+pattern = [{"_": {"country": {"FUZZY3": "Kyrgyzstan"}}}]
+```
+
+#### Regex and fuzzy matching with lists {#regex-fuzzy-lists new="3.5"}
+
+Starting in spaCy v3.5, both `REGEX` and `FUZZY` can be combined with the
+attributes `IN` and `NOT_IN`:
+
+```python
+pattern = [{"TEXT": {"FUZZY": {"IN": ["awesome", "cool", "wonderful"]}}}]
+
+pattern = [{"TEXT": {"REGEX": {"NOT_IN": ["^awe(some)?$", "^wonder(ful)?"]}}}]
+```
+
 ---
 
 #### Operators and quantifiers {#quantifiers}
@@ -375,7 +415,7 @@ scoped quantifiers – instead, you can build those behaviors with `on_match`
 callbacks.
 
 | OP      | Description                                                            |
-|---------|------------------------------------------------------------------------|
+| ------- | ---------------------------------------------------------------------- |
 | `!`     | Negate the pattern, by requiring it to match exactly 0 times.          |
 | `?`     | Make the pattern optional, by allowing it to match 0 or 1 times.       |
 | `+`     | Require the pattern to match 1 or more times.                          |
@@ -1792,7 +1832,7 @@ the entity `Span` – for example `._.orgs` or `._.prev_orgs` and
 > [`Doc.retokenize`](/api/doc#retokenize) context manager:
 >
 > ```python
-> with doc.retokenize() as retokenize:
+> with doc.retokenize() as retokenizer:
 >   for ent in doc.ents:
 >       retokenizer.merge(ent)
 > ```

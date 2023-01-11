@@ -202,6 +202,23 @@ already present in the current span group.
 | `other`     | The span group or spans to append. ~~Union[SpanGroup, Iterable[Span]]~~ |
 | **RETURNS** | The span group. ~~SpanGroup~~                                           |
 
+## SpanGroup.\_\_iter\_\_ {#iter tag="method" new="3.5"}
+
+Iterate over the spans in this span group.
+
+> #### Example
+>
+> ```python
+> doc = nlp("Their goi ng home")
+> doc.spans["errors"] = [doc[0:1], doc[1:3]]
+> for error_span in doc.spans["errors"]:
+>     print(error_span)
+> ```
+
+| Name       | Description                         |
+| ---------- | ----------------------------------- |
+| **YIELDS** | A span in this span group. ~~Span~~ |
+
 ## SpanGroup.append {#append tag="method"}
 
 Add a [`Span`](/api/span) object to the group. The span must refer to the same
@@ -255,9 +272,10 @@ Return a copy of the span group.
 > new_group = doc.spans["errors"].copy()
 > ```
 
-| Name        | Description                                     |
-| ----------- | ----------------------------------------------- |
-| **RETURNS** | A copy of the `SpanGroup` object. ~~SpanGroup~~ |
+| Name        | Description                                                                                        |
+| ----------- | -------------------------------------------------------------------------------------------------- |
+| `doc`       | The document to which the copy is bound. Defaults to `None` for the current doc. ~~Optional[Doc]~~ |
+| **RETURNS** | A copy of the `SpanGroup` object. ~~SpanGroup~~                                                    |
 
 ## SpanGroup.to_bytes {#to_bytes tag="method"}
 

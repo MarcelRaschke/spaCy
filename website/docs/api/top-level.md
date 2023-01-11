@@ -45,16 +45,16 @@ specified separately using the new `exclude` keyword argument.
 > nlp = spacy.load("en_core_web_sm", exclude=["parser", "tagger"])
 > ```
 
-| Name                                  | Description                                                                                                                                                                                                                                                        |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `name`                                | Pipeline to load, i.e. package name or path. ~~Union[str, Path]~~                                                                                                                                                                                                  |
-| _keyword-only_                        |                                                                                                                                                                                                                                                                    |
-| `vocab`                               | Optional shared vocab to pass in on initialization. If `True` (default), a new `Vocab` object will be created. ~~Union[Vocab, bool]~~                                                                                                                              |
-| `disable`                             | Name(s) of pipeline component(s) to [disable](/usage/processing-pipelines#disabling). Disabled pipes will be loaded but they won't be run unless you explicitly enable them by calling [nlp.enable_pipe](/api/language#enable_pipe). ~~Union[str, Iterable[str]]~~ |
-| `enable` <Tag variant="new">3.4</Tag> | Name(s) of pipeline component(s) to [enable](/usage/processing-pipelines#disabling). All other pipes will be disabled. ~~Union[str, Iterable[str]]~~                                                                                                               |
-| `exclude` <Tag variant="new">3</Tag>  | Name(s) of pipeline component(s) to [exclude](/usage/processing-pipelines#disabling). Excluded components won't be loaded. ~~Union[str, Iterable[str]]~~                                                                                                           |
-| `config` <Tag variant="new">3</Tag>   | Optional config overrides, either as nested dict or dict keyed by section value in dot notation, e.g. `"components.name.value"`. ~~Union[Dict[str, Any], Config]~~                                                                                                 |
-| **RETURNS**                           | A `Language` object with the loaded pipeline. ~~Language~~                                                                                                                                                                                                         |
+| Name                                  | Description                                                                                                                                                                                                                                                                                                        |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `name`                                | Pipeline to load, i.e. package name or path. ~~Union[str, Path]~~                                                                                                                                                                                                                                                  |
+| _keyword-only_                        |                                                                                                                                                                                                                                                                                                                    |
+| `vocab`                               | Optional shared vocab to pass in on initialization. If `True` (default), a new `Vocab` object will be created. ~~Union[Vocab, bool]~~                                                                                                                                                                              |
+| `disable`                             | Name(s) of pipeline component(s) to [disable](/usage/processing-pipelines#disabling). Disabled pipes will be loaded but they won't be run unless you explicitly enable them by calling [nlp.enable_pipe](/api/language#enable_pipe). Is merged with the config entry `nlp.disabled`. ~~Union[str, Iterable[str]]~~ |
+| `enable` <Tag variant="new">3.4</Tag> | Name(s) of pipeline component(s) to [enable](/usage/processing-pipelines#disabling). All other pipes will be disabled. ~~Union[str, Iterable[str]]~~                                                                                                                                                               |
+| `exclude` <Tag variant="new">3</Tag>  | Name(s) of pipeline component(s) to [exclude](/usage/processing-pipelines#disabling). Excluded components won't be loaded. ~~Union[str, Iterable[str]]~~                                                                                                                                                           |
+| `config` <Tag variant="new">3</Tag>   | Optional config overrides, either as nested dict or dict keyed by section value in dot notation, e.g. `"components.name.value"`. ~~Union[Dict[str, Any], Config]~~                                                                                                                                                 |
+| **RETURNS**                           | A `Language` object with the loaded pipeline. ~~Language~~                                                                                                                                                                                                                                                         |
 
 Essentially, `spacy.load()` is a convenience wrapper that reads the pipeline's
 [`config.cfg`](/api/data-formats#config), uses the language and pipeline
@@ -237,16 +237,17 @@ browser. Will run a simple web server.
 > displacy.serve([doc1, doc2], style="dep")
 > ```
 
-| Name      | Description                                                                                                                                                       |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `docs`    | Document(s) or span(s) to visualize. ~~Union[Iterable[Union[Doc, Span]], Doc, Span]~~                                                                             |
-| `style`   | Visualization style, `"dep"`, `"ent"` or `"span"` <Tag variant="new">3.3</Tag>. Defaults to `"dep"`. ~~str~~                                                      |
-| `page`    | Render markup as full HTML page. Defaults to `True`. ~~bool~~                                                                                                     |
-| `minify`  | Minify HTML markup. Defaults to `False`. ~~bool~~                                                                                                                 |
-| `options` | [Visualizer-specific options](#displacy_options), e.g. colors. ~~Dict[str, Any]~~                                                                                 |
-| `manual`  | Don't parse `Doc` and instead expect a dict or list of dicts. [See here](/usage/visualizers#manual-usage) for formats and examples. Defaults to `False`. ~~bool~~ |
-| `port`    | Port to serve visualization. Defaults to `5000`. ~~int~~                                                                                                          |
-| `host`    | Host to serve visualization. Defaults to `"0.0.0.0"`. ~~str~~                                                                                                     |
+| Name               | Description                                                                                                                                                       |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs`             | Document(s) or span(s) to visualize. ~~Union[Iterable[Union[Doc, Span]], Doc, Span]~~                                                                             |
+| `style`            | Visualization style, `"dep"`, `"ent"` or `"span"` <Tag variant="new">3.3</Tag>. Defaults to `"dep"`. ~~str~~                                                      |
+| `page`             | Render markup as full HTML page. Defaults to `True`. ~~bool~~                                                                                                     |
+| `minify`           | Minify HTML markup. Defaults to `False`. ~~bool~~                                                                                                                 |
+| `options`          | [Visualizer-specific options](#displacy_options), e.g. colors. ~~Dict[str, Any]~~                                                                                 |
+| `manual`           | Don't parse `Doc` and instead expect a dict or list of dicts. [See here](/usage/visualizers#manual-usage) for formats and examples. Defaults to `False`. ~~bool~~ |
+| `port`             | Port to serve visualization. Defaults to `5000`. ~~int~~                                                                                                          |
+| `host`             | Host to serve visualization. Defaults to `"0.0.0.0"`. ~~str~~                                                                                                     |
+| `auto_select_port` | If `True`, automatically switch to a different port if the specified port is already in use. Defaults to `False`. ~~bool~~                                          |
 
 ### displacy.render {#displacy.render tag="method" new="2"}
 
@@ -266,7 +267,7 @@ Render a dependency parse tree or named entity visualization.
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `docs`      | Document(s) or span(s) to visualize. ~~Union[Iterable[Union[Doc, Span, dict]], Doc, Span, dict]~~                                                                                      |
 | `style`     | Visualization style, `"dep"`, `"ent"` or `"span"` <Tag variant="new">3.3</Tag>. Defaults to `"dep"`. ~~str~~                                                                           |
-| `page`      | Render markup as full HTML page. Defaults to `True`. ~~bool~~                                                                                                                          |
+| `page`      | Render markup as full HTML page. Defaults to `False`. ~~bool~~                                                                                                                         |
 | `minify`    | Minify HTML markup. Defaults to `False`. ~~bool~~                                                                                                                                      |
 | `options`   | [Visualizer-specific options](#displacy_options), e.g. colors. ~~Dict[str, Any]~~                                                                                                      |
 | `manual`    | Don't parse `Doc` and instead expect a dict or list of dicts. [See here](/usage/visualizers#manual-usage) for formats and examples. Defaults to `False`. ~~bool~~                      |
@@ -354,22 +355,22 @@ If a setting is not present in the options, the default value will be used.
 > displacy.serve(doc, style="dep", options=options)
 > ```
 
-| Name                                       | Description                                                                                                                                  |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `fine_grained`                             | Use fine-grained part-of-speech tags (`Token.tag_`) instead of coarse-grained tags (`Token.pos_`). Defaults to `False`. ~~bool~~             |
-| `add_lemma` <Tag variant="new">2.2.4</Tag> | Print the lemmas in a separate row below the token texts. Defaults to `False`. ~~bool~~                                                      |
-| `collapse_punct`                           | Attach punctuation to tokens. Can make the parse more readable, as it prevents long arcs to attach punctuation. Defaults to `True`. ~~bool~~ |
-| `collapse_phrases`                         | Merge noun phrases into one token. Defaults to `False`. ~~bool~~                                                                             |
-| `compact`                                  | "Compact mode" with square arrows that takes up less space. Defaults to `False`. ~~bool~~                                                    |
-| `color`                                    | Text color (HEX, RGB or color names). Defaults to `"#000000"`. ~~str~~                                                                       |
-| `bg`                                       | Background color (HEX, RGB or color names). Defaults to `"#ffffff"`. ~~str~~                                                                 |
-| `font`                                     | Font name or font family for all text. Defaults to `"Arial"`. ~~str~~                                                                        |
-| `offset_x`                                 | Spacing on left side of the SVG in px. Defaults to `50`. ~~int~~                                                                             |
-| `arrow_stroke`                             | Width of arrow path in px. Defaults to `2`. ~~int~~                                                                                          |
-| `arrow_width`                              | Width of arrow head in px. Defaults to `10` in regular mode and `8` in compact mode. ~~int~~                                                 |
-| `arrow_spacing`                            | Spacing between arrows in px to avoid overlaps. Defaults to `20` in regular mode and `12` in compact mode. ~~int~~                           |
-| `word_spacing`                             | Vertical spacing between words and arcs in px. Defaults to `45`. ~~int~~                                                                     |
-| `distance`                                 | Distance between words in px. Defaults to `175` in regular mode and `150` in compact mode. ~~int~~                                           |
+| Name               | Description                                                                                                                                  |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fine_grained`     | Use fine-grained part-of-speech tags (`Token.tag_`) instead of coarse-grained tags (`Token.pos_`). Defaults to `False`. ~~bool~~             |
+| `add_lemma`        | Print the lemmas in a separate row below the token texts. Defaults to `False`. ~~bool~~                                                      |
+| `collapse_punct`   | Attach punctuation to tokens. Can make the parse more readable, as it prevents long arcs to attach punctuation. Defaults to `True`. ~~bool~~ |
+| `collapse_phrases` | Merge noun phrases into one token. Defaults to `False`. ~~bool~~                                                                             |
+| `compact`          | "Compact mode" with square arrows that takes up less space. Defaults to `False`. ~~bool~~                                                    |
+| `color`            | Text color (HEX, RGB or color names). Defaults to `"#000000"`. ~~str~~                                                                       |
+| `bg`               | Background color (HEX, RGB or color names). Defaults to `"#ffffff"`. ~~str~~                                                                 |
+| `font`             | Font name or font family for all text. Defaults to `"Arial"`. ~~str~~                                                                        |
+| `offset_x`         | Spacing on left side of the SVG in px. Defaults to `50`. ~~int~~                                                                             |
+| `arrow_stroke`     | Width of arrow path in px. Defaults to `2`. ~~int~~                                                                                          |
+| `arrow_width`      | Width of arrow head in px. Defaults to `10` in regular mode and `8` in compact mode. ~~int~~                                                 |
+| `arrow_spacing`    | Spacing between arrows in px to avoid overlaps. Defaults to `20` in regular mode and `12` in compact mode. ~~int~~                           |
+| `word_spacing`     | Vertical spacing between words and arcs in px. Defaults to `45`. ~~int~~                                                                     |
+| `distance`         | Distance between words in px. Defaults to `175` in regular mode and `150` in compact mode. ~~int~~                                           |
 
 #### Named Entity Visualizer options {#displacy_options-ent}
 
@@ -385,7 +386,7 @@ If a setting is not present in the options, the default value will be used.
 | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `ents`                                           | Entity types to highlight or `None` for all types (default). ~~Optional[List[str]]~~                                                                                                                                                        |
 | `colors`                                         | Color overrides. Entity types should be mapped to color names or values. ~~Dict[str, str]~~                                                                                                                                                 |
-| `template` <Tag variant="new">2.2</Tag>          | Optional template to overwrite the HTML used to render entity spans. Should be a format string and can use `{bg}`, `{text}` and `{label}`. See [`templates.py`](%%GITHUB_SPACY/spacy/displacy/templates.py) for examples. ~~Optional[str]~~ |
+| `template`                                       | Optional template to overwrite the HTML used to render entity spans. Should be a format string and can use `{bg}`, `{text}` and `{label}`. See [`templates.py`](%%GITHUB_SPACY/spacy/displacy/templates.py) for examples. ~~Optional[str]~~ |
 | `kb_url_template` <Tag variant="new">3.2.1</Tag> | Optional template to construct the KB url for the entity to link to. Expects a python f-string format with single field to fill in. ~~Optional[str]~~                                                                                       |
 
 #### Span Visualizer options {#displacy_options-span}
@@ -513,7 +514,7 @@ a [Weights & Biases](https://www.wandb.com/) dashboard.
 Instead of using one of the built-in loggers, you can
 [implement your own](/usage/training#custom-logging).
 
-#### spacy.ConsoleLogger.v2 {#ConsoleLogger tag="registered function"}
+#### spacy.ConsoleLogger.v2 {tag="registered function"}
 
 > #### Example config
 >
@@ -564,11 +565,33 @@ start decreasing across epochs.
 
  </Accordion>
 
-| Name             | Description                                                           |
-| ---------------- | --------------------------------------------------------------------- |
-| `progress_bar`   | Whether the logger should print the progress bar ~~bool~~             |
-| `console_output` | Whether the logger should print the logs on the console. ~~bool~~     |
-| `output_file`    | The file to save the training logs to. ~~Optional[Union[str, Path]]~~ |
+| Name             | Description                                                                                                                  |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `progress_bar`   | Whether the logger should print a progress bar tracking the steps till the next evaluation pass (default: `False`). ~~bool~~ |
+| `console_output` | Whether the logger should print the logs in the console (default: `True`). ~~bool~~                                          |
+| `output_file`    | The file to save the training logs to (default: `None`). ~~Optional[Union[str, Path]]~~                                      |
+
+#### spacy.ConsoleLogger.v3 {#ConsoleLogger tag="registered function"}
+
+> #### Example config
+>
+> ```ini
+> [training.logger]
+> @loggers = "spacy.ConsoleLogger.v3"
+> progress_bar = "all_steps"
+> console_output = true
+> output_file = "training_log.jsonl"
+> ```
+
+Writes the results of a training step to the console in a tabular format and
+optionally saves them to a `jsonl` file.
+
+| Name             | Description                                                                                                                                               |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `progress_bar`   | Type of progress bar to show in the console: `"train"`, `"eval"` or `None`.                                                                               |
+|                  | The bar tracks the number of steps until `training.max_steps` and `training.eval_frequency` are reached respectively (default: `None`). ~~Optional[str]~~ |
+| `console_output` | Whether the logger should print the logs in the console (default: `True`). ~~bool~~                                                                       |
+| `output_file`    | The file to save the training logs to (default: `None`). ~~Optional[Union[str, Path]]~~                                                                   |
 
 ## Readers {#readers}
 
@@ -1003,6 +1026,54 @@ This method was previously available as `spacy.gold.spans_from_biluo_tags`.
 | `doc`       | The document that the BILUO tags refer to. ~~Doc~~                                                                                                                                                                                                           |
 | `tags`      | A sequence of [BILUO](/usage/linguistic-features#accessing-ner) tags with each tag describing one token. Each tag string will be of the form of either `""`, `"O"` or `"{action}-{label}"`, where action is one of `"B"`, `"I"`, `"L"`, `"U"`. ~~List[str]~~ |
 | **RETURNS** | A sequence of `Span` objects with added entity labels. ~~List[Span]~~                                                                                                                                                                                        |
+
+### training.biluo_to_iob {#biluo_to_iob tag="function"}
+
+Convert a sequence of [BILUO](/usage/linguistic-features#accessing-ner) tags to
+[IOB](/usage/linguistic-features#accessing-ner) tags. This is useful if you want
+use the BILUO tags with a model that only supports IOB tags.
+
+> #### Example
+>
+> ```python
+> from spacy.training import biluo_to_iob
+>
+> tags = ["O", "O", "B-LOC", "I-LOC", "L-LOC", "O"]
+> iob_tags = biluo_to_iob(tags)
+> assert iob_tags == ["O", "O", "B-LOC", "I-LOC", "I-LOC", "O"]
+> ```
+
+| Name        | Description                                                                             |
+| ----------- | --------------------------------------------------------------------------------------- |
+| `tags`      | A sequence of [BILUO](/usage/linguistic-features#accessing-ner) tags. ~~Iterable[str]~~ |
+| **RETURNS** | A list of [IOB](/usage/linguistic-features#accessing-ner) tags. ~~List[str]~~           |
+
+### training.iob_to_biluo {#iob_to_biluo tag="function"}
+
+Convert a sequence of [IOB](/usage/linguistic-features#accessing-ner) tags to
+[BILUO](/usage/linguistic-features#accessing-ner) tags. This is useful if you
+want use the IOB tags with a model that only supports BILUO tags.
+
+<Infobox title="Changed in v3.0" variant="warning" id="iob_to_biluo">
+
+This method was previously available as `spacy.gold.iob_to_biluo`.
+
+</Infobox>
+
+> #### Example
+>
+> ```python
+> from spacy.training import iob_to_biluo
+>
+> tags = ["O", "O", "B-LOC", "I-LOC", "O"]
+> biluo_tags = iob_to_biluo(tags)
+> assert biluo_tags == ["O", "O", "B-LOC", "L-LOC", "O"]
+> ```
+
+| Name        | Description                                                                           |
+| ----------- | ------------------------------------------------------------------------------------- |
+| `tags`      | A sequence of [IOB](/usage/linguistic-features#accessing-ner) tags. ~~Iterable[str]~~ |
+| **RETURNS** | A list of [BILUO](/usage/linguistic-features#accessing-ner) tags. ~~List[str]~~       |
 
 ## Utility functions {#util source="spacy/util.py"}
 
